@@ -4,7 +4,7 @@ A multi-label classification model that predicts which awards, if any, an NBA pl
 
 ## Problem
 
-Can player performance metrics be used to predict NBA award outcomes? We frame this as a multi-label classification problem across five award categories: MVP vote, All-Star, All-NBA, DPOY vote, and All-Defensive — a player can be predicted to receive more than one.
+Can player performance metrics be used to predict NBA award outcomes? We frame this as a multi-label classification problem across five award categories: MVP vote, All-Star, All-NBA, DPOY vote, and All-Defensive; a player can be predicted to receive more than one.
 
 ## Data
 
@@ -14,7 +14,8 @@ Player-season performance data (basic + advanced stats) across five seasons, 202
 
 - **Model:** Random Forest Classifier wrapped in a `ClassifierChain`, so predictions for one award (e.g. an MVP vote) inform the model's predictions for related awards (e.g. All-NBA) rather than treating each label independently.
 - **Class imbalance:** award-winning seasons are rare relative to the full player pool, so we applied class weighting to keep the model from defaulting to "no award" predictions.
-- **Feature selection:** after an initial pass with the full feature set, we used Random Forest feature importances to drop low-signal features and refit on a leaner, more interpretable set.
+- **Feature selection:** after an initial pass with the full feature set, we used Random Forest feature importances to drop low-signal features, and checked for multicollinearity between remaining features using variance inflation factor (VIF) before refitting on a leaner, more interpretable set.
+- **Model comparison:** alongside the Random Forest Classifier Chain, we also tried a `BaggingClassifier` as a point of comparison before settling on the Random Forest approach.
 - **Threshold tuning:** rather than using a default 0.5 decision threshold, we swept a range of thresholds against validation data and selected the one that maximized F1 score, since the "no award" class dominates the data and a naive threshold underpredicts awards.
 
 ## Results
@@ -25,11 +26,11 @@ Player-season performance data (basic + advanced stats) across five seasons, 202
 
 ## Try it
 
-The `make_prediction()` function at the end of the notebook takes a player's season stats and returns the awards the model predicts for them — the notebook includes example predictions for Stephen Curry (2023) and Victor Wembanyama (2025) checked against their actual award outcomes that season.
+The `make_prediction()` function at the end of the notebook takes a player's season stats and returns the awards the model predicts for them. The notebook includes example predictions for Stephen Curry (2023) and Victor Wembanyama (2025) checked against their actual award outcomes that season.
 
 ## Tech Stack
 
-Python, pandas, scikit-learn (`RandomForestClassifier`, `ClassifierChain`), matplotlib
+Python, pandas, scikit-learn (`RandomForestClassifier`, `ClassifierChain`, `BaggingClassifier`), statsmodels (VIF), matplotlib
 
 ## References
 
